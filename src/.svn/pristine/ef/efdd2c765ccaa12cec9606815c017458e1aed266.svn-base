@@ -1,0 +1,131 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+//import Index from '@/views/index/index'
+// import News from '@/views/news/index'
+// import listmore from '@/views/index/listmore'
+// import register from '@/views/index/register'
+// import logn from '@/views/index/logn'
+// import user from '@/views/index/user'
+// import articleDetail from '@/views/index/articleDetail'
+// import articleNewsDetail from '@/views/news/articleDetail'
+// import publish from '@/views/index/publish'
+// import Community from '@/views/community/index'
+// import Service from '@/views/service/index'
+// import ServiceList from '@/views/service/list'
+// import RoadIndex from '@/views/road/index'
+// import RoadDetail from '@/views/road/detail'
+// import goldword from '@/views/words/list'
+// import changepsd from '@/views/index/changepsd'
+
+
+
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+     {
+      path: '/',
+      name: 'index',
+      component: resolve=>(require(["@/views/index/index"],resolve))
+    },
+    {
+      path: '/news',
+      name: 'news',
+      component: resolve=>(require(["@/views/news/index"],resolve))
+    },
+    { 
+     path: '/articleDetail',
+     name: 'articleDetail',
+     component: resolve=>(require(["@/views/index/articleDetail"],resolve))
+    
+    },
+    { 
+     path: '/articleNewsDetail',
+     name: 'articleNewsDetail',
+     component: resolve=>(require(["@/views/news/articleDetail"],resolve))
+   
+    },
+    { 
+     path: '/listmore',
+     name: 'listmore',
+     component: resolve=>(require(["@/views/index/listmore"],resolve))
+     
+    },
+    { 
+     path: '/register',
+     name: 'register',
+     component: resolve=>(require(["@/views/index/register"],resolve))
+     
+    },
+    { 
+     path: '/logn',
+     name: 'logn',
+     component: resolve=>(require(["@/views/index/logn"],resolve))
+     
+    },
+    { 
+     path: '/user',
+     name: 'user',
+     component: resolve=>(require(["@/views/index/user"],resolve))
+    
+    },
+    { 
+     path: '/changepsd',
+     name: 'changepsd',
+     component: resolve=>(require(["@/views/index/changepsd"],resolve))
+     
+    },
+    { 
+     path: '/publish',
+     name: 'publish',
+     component: resolve=>(require(["@/views/index/publish"],resolve))
+     
+    },
+    { 
+     path: '/Community',
+     name: 'Community',
+     component: resolve=>(require(["@/views/community/index"],resolve))
+     
+    },
+    { 
+     path: '/service',
+     name: 'Service',
+     component: resolve=>(require(["@/views/service/index"],resolve))
+     
+    },
+    { 
+     path: '/servicelist',
+     name: 'ServiceList',
+     component: resolve=>(require(["@/views/service/list"],resolve))
+     
+    },
+    { 
+     path: '/goldword',
+     name: 'goldword',
+     component: resolve=>(require(["@/views/words/list"],resolve))
+     
+    },
+    { 
+     path: '/RoadIndex',
+     name: 'RoadIndex',
+     component: resolve=>(require(["@/views/road/index"],resolve))
+     
+    },
+    { 
+     path: '/RoadDetail',
+     name: 'RoadDetail',
+     component: resolve=>(require(["@/views/road/detail"],resolve))
+     
+    },
+
+    /*{
+      path: '/road',
+      name: 'road',
+      children:[
+                    { path: '/road/index', component:RoadIndex},
+                    { path: '/road/detail', component:RoadDetail},
+
+      ]
+    }*/
+  ]
+})

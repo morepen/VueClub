@@ -1,0 +1,60 @@
+<template>
+<div class="listmore">
+   
+     <Header :TabState="1"></Header>
+     <List></List>
+     <div class="adv_wrap">
+         <div class="adv_head">APP下载</div>
+         <a download="hdhome" href="http://www.hdhome.net/download/app/hdhome1.0.apk"><img class="app_code" src="../../assets/app.png"></a>
+     </div>
+</div>
+</template>
+<script>
+  import Header from '@/components/header.vue'
+  import List from '@/components/list.vue'
+  export default{
+    components: {Header,List},
+    data(){
+      return{
+        show1:true,
+        isNowPage: true,
+        taglist:[]
+        
+
+      }
+    },
+    created() {
+      
+    
+      
+    },
+    methods: {
+      
+      
+      
+    }
+  }
+</script>
+<style>
+ .adv_wrap{
+   width:100px;
+   height:136px;
+   position:fixed;
+   left:0px;
+   top:50%;
+   margin-top:-68px;
+ }
+ .adv_head{
+    line-height:36px;
+    background: #61669d;
+    color:#fff;
+    text-align:center;
+    font-size:14px;
+ }
+ .app_code{
+   width:100px;
+   height:100px;
+ }
+</style>
+
+

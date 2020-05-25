@@ -1,0 +1,562 @@
+<template>
+<div class="publish">
+   
+     <Header></Header>
+     <el-container class="main">
+        <el-main>
+            <el-breadcrumb separator-class="el-icon-arrow-right" class="box">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/newsManagePage' }">我的新闻</el-breadcrumb-item>
+                <el-breadcrumb-item v-if="isModify">修改新闻</el-breadcrumb-item>
+                <el-breadcrumb-item v-else>发布新新闻</el-breadcrumb-item>
+            </el-breadcrumb> 
+            <el-row class="warp">
+                    <!--
+            Form 组件提供了表单验证的功能，只需要通过 rule 属性传入约定的验证规则，并 Form-Item 的 prop 属性设置为需校验的字段名即可。具体可以参考官网：http://element.eleme.io/#/zh-CN/component/form
+            -->
+                <el-col :span="24" class="warp-main">
+                    <el-form ref="infoForm" :model="infoForm" :rules="rules" label-width="50px">
+                        <el-form-item label="标题" prop="a_title">
+                            <el-input v-model="infoForm.a_title"></el-input>
+                        </el-form-item>
+                
+
+                        <el-form-item label="类型" prop="a_title">
+                            <el-select  v-model="infoForm.a_type" placeholder="a_type" @change="handleSelect($event)">
+                                <el-option
+                                    v-for="item in taglist"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.name">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    
+                        <el-form-item label="图片" prop="imageUrl">
+                            
+                            <el-upload
+                                class="avatar-uploader"
+                                ref="upload"
+                                name="picture"
+                                :action="serverUrl"
+                                :show-file-list="false"
+                                :on-success="handleAvatarSuccess"
+                                :before-upload="beforeAvatarUpload"
+                                >
+                                <img v-if="infoForm.imageUrl" :src="infoForm.imageUrl" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+
+                        </el-form-item>
+
+                        <el-form-item label="地址" prop="a_title">
+                            <input v-model="formattedAddress" v-if="!isshowmap" class="map_input"></input>
+                            <input :value="mapAddress" v-if="isshowmap"  @focus="focusfns"  class="map_input"></input>
+                            <Xnmap></Xnmap>
+                        </el-form-item>
+                        
+
+                        <!--使用编辑器-->
+                        <el-form-item label="内容" prop="a_content">
+                            <div class="edit_container">
+                               <quill-editor 
+                                   v-model="content"
+                                   ref="QuillEditor"
+                                   :options="editorOption"
+                                   >
+                                </quill-editor>
+                                 <el-upload
+                                  class="quill-uploader-image quill_hide"
+                                  :action="quillImageUrl"
+                                  name="picture"
+                                  :show-file-list="false"
+                                  :on-success="quillImageSuccess"
+                                  :on-error="uploadError"
+                                  >
+                                </el-upload>
+                                <el-upload
+                                  class="quill-uploader-file quill_hide"
+                                  :action="quillImageUrl"
+                                  name="picture"
+                                  :show-file-list="false"
+                                  :on-success="quillFileSuccess"
+                                  :on-error="uploadError"
+                                  >
+                                </el-upload>
+                                <el-upload
+                                  class="quill-uploader-video quill_hide"
+                                  :action="quillImageUrl"
+                                  name="picture"
+                                  :show-file-list="false"
+                                  :on-success="quillVideoSuccess"
+                                  :on-error="uploadError"
+                                  >
+                                </el-upload>
+                            </div>
+                        </el-form-item>
+                
+
+                        <el-form-item>
+                            <el-button type="primary" @click="onSubmit">发布</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-col>
+            
+            
+            </el-row>        
+        </el-main> 
+    </el-container>
+</div>
+</template>
+<script>
+ import Vue from 'vue'
+   //使用编辑器
+  import VueQuillEditor from 'vue-quill-editor';
+  import 'quill/dist/quill.core.css'
+  import 'quill/dist/quill.snow.css'
+  import 'quill/dist/quill.bubble.css'
+  Vue.use(VueQuillEditor)
+
+  //使用高德地图
+  import VueAMap  from 'vue-amap';
+  Vue.use(VueAMap);
+  // 初始化vue-amap
+  VueAMap.initAMapApiLoader({
+    // 高德的key
+    key: '882693bb802c1cf43b9b574fd923f551',
+    // 插件集合
+    plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor','AMap.Geolocation'],
+    v: '1.4.4'
+     
+  });
+  import Header from '@/components/header.vue'
+  import Content from '@/components/Content.vue'
+  import Xnmap from '@/components/map.vue'
+  import {Message,Loading} from 'element-ui'
+  import * as Quill from 'quill'
+
+   // 工具栏配置
+    const toolbarOptions = [
+      ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+      ['blockquote', 'code-block'],
+    
+      [{'header': 1}, {'header': 2}],               // custom button values
+      [{'list': 'ordered'}, {'list': 'bullet'}],
+      [{'script': 'sub'}, {'script': 'super'}],      // superscript/subscript
+      [{'indent': '-1'}, {'indent': '+1'}],          // outdent/indent
+      [{'direction': 'rtl'}],                         // text direction
+    
+      [{'size': ['small', false, 'large', 'huge']}],  // custom dropdown
+      [{'header': [1, 2, 3, 4, 5, 6, false]}],
+    
+      [{'color': []}, {'background': []}],          // dropdown with defaults from theme
+      [{'font': []}],
+      [{'align': []}],
+      ['link', 'image', 'video','upload'],
+      ['clean']                                         // remove formatting button
+    ]
+    var Link = Quill.import('formats/link');
+  class FileBlot extends Link {  // 继承Link Blot
+    static create(value) {
+      let node = undefined
+      if (value&&!value.href){  // 适应原本的Link Blot
+        node = super.create(value);
+      }
+      else{  // 自定义Link Blot
+        node = super.create(value.href);
+        // node.setAttribute('download', value.innerText);  // 左键点击即下载
+        node.innerText = value.innerText;
+        node.download = value.innerText;
+      }
+      return node;
+    }
+  }
+  FileBlot.blotName = 'link';
+  FileBlot.tagName = 'A';
+  Quill.register(FileBlot);
+
+  export default{
+    components: {Header,Content,Xnmap},
+    data(){
+      return{
+      editorOption: {                
+                    modules: {
+                      
+                        toolbar: {
+                            container: toolbarOptions,  // 工具栏
+                            handlers: {
+                                'image': function (value) {
+                                
+                                    if (value) {
+                                        document.querySelector('.quill-uploader-image input').click()
+                                    } else {
+                                        this.quill.format('image', false);
+                                    }
+                                },
+                                'upload': (value => {
+                                  if (value) {
+                                 
+                                    document.querySelector('.quill-uploader-file input').click()
+                                  }
+                                }),
+                                'video': (value => {
+                                  if (value) {
+                                  
+                                    document.querySelector('.quill-uploader-video input').click()
+                                  }
+                                })
+                            }
+                        }
+                    }
+        },
+        serverUrl:'https://www.hdhome.net/public/CreateCover',
+        quillImageUrl:'https://www.hdhome.net/public/CreateCover',
+        title:"",
+        content:"",
+        coverimage:"",
+        show1:true,
+        isNowPage: true,
+        curryId:this.$route.query.id,
+        ArticleDetail:{},
+        infoForm: {
+          a_title: '',
+          a_type:'生活',
+          a_content:'',
+          imageUrl: '',
+          quillimageUrl:''
+        },
+        tagid:"1",
+        isModify:false,
+        addmodify:'add',
+        taglist: [],
+        // 表单验证
+        rules: {
+           
+        },
+        acontent:'',
+        isshowmap:true,
+        formattedAddress:"",
+        mapAddress:this.$store.state.address
+        
+
+      }
+    },
+    created() {
+      this.GetTagsList();
+      
+    },
+
+    methods: {
+     focusfns() {
+       this.isshowmap=false;
+       this.formattedAddress=this.mapAddress;
+       debugger;
+      
+     },
+     handleSelect(event){
+     
+       this.tagid=event;
+       
+
+     },
+     GetTagsList(){
+        var that=this;
+        var params={
+        };
+        this.$http.baseAction("TagsList",params).then(function (response) {
+                    
+                    if(response.code=="200"){
+                       
+                         that.taglist=response.data; 
+                         that.infoForm.a_type=response.data[0].name;
+                                     
+                                             
+                    }
+                
+                  })
+            .catch(function (error) {
+                  console.log(error);
+            });
+     },
+    quillFileSuccess(res, file) {
+        
+        // // 处理编辑器的文件上传
+        if (res.code == 200 ) {
+            // 插入图片  res.url为服务器返回的图片地址
+            var quillfileUrl="https://www.hdhome.net"+res.data;
+            var fileNameLength = file.name.length
+            // 插入链接
+            let quill = this.$refs.QuillEditor.quill
+            let length = quill.getSelection().index;
+            quill.insertEmbed(length, 'link', {href:quillfileUrl, innerText:file.name+"(点击下载)"}, "api")
+            quill.setSelection(length + fileNameLength)
+            } else {
+                alert('文件插入失败')
+            }
+       
+    },
+    quillVideoSuccess(res, file) {
+        
+        // // 处理编辑器的视频上传
+        if (res.code == 200 ) {
+            // 插入图片  res.url为服务器返回的图片地址
+            var quillfileUrl="https://www.hdhome.net"+res.data;
+            var fileNameLength = file.name.length
+            // 插入链接
+            let quill = this.$refs.QuillEditor.quill
+            let length = quill.getSelection().index;
+            quill.insertEmbed(length, 'video', quillfileUrl)
+            quill.setSelection(length + fileNameLength)
+            } else {
+                alert('视频插入失败')
+            }
+       
+    },
+    quillImageSuccess(res, file) {
+        
+        // // 处理编辑器的图片上传
+        // 如果上传成功
+        if (res.code == 200 ) {
+            // 插入图片  res.url为服务器返回的图片地址
+            var quillimageUrl="https://www.hdhome.net"+res.data;
+            var quill = this.$refs.QuillEditor.quill
+            var length = quill.getSelection().index;
+            quill.insertEmbed(length, 'image', quillimageUrl)
+            quill.setSelection(length + 1)
+            } else {
+                alert('图片插入失败')
+            }
+       
+    },
+         // 富文本图片上传失败
+    uploadError() {
+        // loading动画消失
+        this.quillUpdateImg = false
+        this.$message.error('图片插入失败')
+    },
+    // 文件上传成功的钩子函数
+    handleAvatarSuccess(res, file) {
+        
+        // // res为图片服务器返回的数据
+        // // 获取富文本组件实例
+        console.log(res);
+        // 如果上传成功
+        if (res.code == 200 ) {
+            // 插入图片  res.url为服务器返回的图片地址
+            this.infoForm.imageUrl="https://www.hdhome.net"+res.data;
+        } else {
+            alert('图片插入失败')
+        }
+       
+    },
+    // 文件上传前的前的钩子函数
+    // 参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+    beforeAvatarUpload1(file) {
+       
+    },
+    beforeAvatarUpload(file) {
+        const isJPG = file.type === 'image/jpeg';
+        const isGIF = file.type === 'image/gif';
+        const isPNG = file.type === 'image/png';
+        const isBMP = file.type === 'image/bmp';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+
+        if (!isJPG && !isGIF && !isPNG && !isBMP) {
+            this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!');
+        }
+     
+        return isJPG || isBMP || isGIF || isPNG;
+    },
+    handlePictureCardPreview(file){
+        console.log(file.url)
+        this.infoForm.imageUrl =file.url;
+    },
+    onSubmit:function(event){
+        var _this=this;
+        if(this.infoForm.a_title=='') {
+          Message.error({message: '请填写正确标题'}); 
+          return false;
+        } 
+        if(this.infoForm.imageUrl=='') {
+          Message.error({message: '请选择正确封面图'}); 
+          return false;
+        } 
+        if(this.infoForm.content=='') {
+          Message.error({message: '请填写正确内容'}); 
+          return false;
+        }  
+        var that=this;
+        var result_address="暂无地址";
+        if(!this.isshowmap){
+           result_address=this.formattedAddress;
+        }else{
+          result_address=this.mapAddress; 
+
+        }
+        var params={
+          title:this.infoForm.a_title,
+          tag:this.infoForm.a_type,
+          tagid:this.tagid,
+          coverimage:this.infoForm.imageUrl,
+          address:result_address,
+          content:this.content,
+          userid:this.$store.state.userid
+
+        };
+        debugger;
+        Loading.service({text:"Loading..."});
+        this.$http.baseAction("CreateArticle",params).then(function (response) {
+                    Loading.service().close(); 
+                    if(response.code=="200"){
+                       
+                        Message.success({message: '发布成功'});
+                        debugger;
+                        
+                        setTimeout(function(){
+                          const url = '/';
+                          _this.$router.push({"path":url});
+                        },1000)
+                                       
+                                             
+                    }else{
+                      Message.error({message: '发布失败'}); 
+                      return false;
+                    }
+                
+                  })
+            .catch(function (error) {
+                  console.log(error);
+            }); 
+       
+
+      },
+      GetList(){
+        var that=this;
+        var params={
+        };
+        this.$http.baseAction("PicList",params).then(function (response) {
+                    
+                    if(response.code=="200"){
+                       
+                                       
+                                             
+                    }
+                
+                  })
+            .catch(function (error) {
+                  console.log(error);
+            });
+
+     }
+      
+    },
+    watch: {
+      selectedAddress: function() {
+        this.isshowmap=true;
+        this.mapAddress=this.$store.state.address;
+         
+      }
+
+    },
+    computed: {
+      editor() {
+       return this.$refs.myQuillEditor.quill;
+      },
+      selectedAddress:function () {
+          return this.$store.state.address
+      }
+    }
+  }
+</script>
+<style>
+ @import '../../assets/template/news/layui/css/layui.css';
+ @import '../../assets/template/news/static/css/index.css';
+ .warp-main{
+  margin-top:30px;
+ }
+ .ql-editor{
+  height: 500px!important;
+}
+.main{
+    width:1000px;
+    margin:0 auto;
+}
+
+.avatar-uploader{
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    float: left;
+}
+.avatar-uploader-icon{
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+}
+.avatar-uploader-icon:before{
+  line-height: 178px;
+}
+.avatar{
+    width: 178px;
+    height: 178px
+}
+  /*富文本图片样式 */
+  .richTextStyle img {
+    max-width: 720px;
+    margin:10px;
+  }
+  /*富文本文字溢出不换行样式 */
+  .richTextStyle p, .richTextStyle sup, .richTextStyle strong,
+  .richTextStyle em, .richTextStyle u,
+  .richTextStyle s, .richTextStyle blockquote, 
+  .richTextStyle h1, .richTextStyle h2, .richTextStyle h3,
+  .richTextStyle h4, .richTextStyle h5, .richTextStyle h6, 
+  .richTextStyle li, .richTextStyle sub, .richTextStyle a {
+    word-break: break-all;
+  }
+  .ql-editing{
+     left:0px!important;
+     top: 0px!important;;
+     margin-top:0px!important;;
+  }
+  .ql-snow.ql-toolbar .ql-upload{
+      background: url("../../assets/file.svg");
+      background-size: 16px 16px;
+      background-position: center center;
+      background-repeat:no-repeat;
+      /*background: red;*/
+}
+.map_input{
+  margin-bottom:20px;
+}
+.quill_hide{
+  display:none
+}
+.map_input{
+    border-color: #C0C4CC;
+    -webkit-appearance: none;
+    background-color: #FFF;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid #DCDFE6;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #606266;
+    display: inline-block;
+    font-size: inherit;
+    height: 40px;
+    line-height: 40px;
+    outline: 0;
+    padding: 0 15px;
+    -webkit-transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+    width: 100%;
+}
+</style>
+
+

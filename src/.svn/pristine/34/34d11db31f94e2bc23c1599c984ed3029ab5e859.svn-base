@@ -1,0 +1,77 @@
+<template>
+<div class="news-footer">
+  <div class="layui-container">
+    <p class="link_top">友情链接</p>
+
+    <div class="links">
+     <a :href="item.url" class="link_url" target="_blank" v-for="item in linklist">{{item.title}}</a>
+    </div>
+    <p class="hdcopyright">Copyright © 活动之家 鄂ICP备15007721号</p>
+  </div>
+</div>
+
+</template>
+<script>
+ export default{
+    components: {
+       
+    },
+    data(){
+      return{
+        
+        linklist:'',
+      
+
+
+      }
+    },
+    created() {
+     
+      this.GetLinkList();  
+    
+      
+    },
+    methods: {
+      GetLinkList:function(){
+        var that=this;
+        var params={
+        };
+        that.$http.baseAction("getLinks",params).then(function (response) {
+                    
+                    if(response.code=="200"){
+                       
+                       that.linklist=response.data;   
+                        
+                                             
+                    }
+                
+                  })
+            .catch(function (error) {
+                  console.log(error);
+            });
+      }
+      
+    }
+  }
+</script>
+<style scoped>
+ .news-footer{height: 140px; background-color: #e6e6e6;}
+ .layui-container{
+   position:relative
+ }
+ .links{
+   padding-top:16px;
+ }
+ .hdcopyright{
+   position:absolute;
+   left:0px;
+   top:110px;
+ }
+ .link_top{
+    padding-top:20px;
+    padding-bottom:10px;
+ }
+  .link_url{
+    padding-right:20px;
+  }
+</style>

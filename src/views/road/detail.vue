@@ -1,0 +1,148 @@
+<template>
+  <div class="road">
+   <Header :TabState="2"></Header>
+   <div class="layui-container">
+    <el-breadcrumb separator-class="el-icon-arrow-right" class="road_box">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/service' }">服务大全</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/RoadIndex' }">在路上</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/RoadDetail' }">详情</el-breadcrumb-item>
+    </el-breadcrumb>
+   <ul class="road_ul">
+     <li v-if="tagid==6">
+       <div class="road_title">户外好玩地方收集</div>
+       <div class="road_js">简述：收集户外常去的小众的野外路线</div>
+     </li>
+     <li v-if="tagid==-1">
+       <div class="road_title">户外好玩地方收集</div>
+       <div class="road_js">简述：收集户外常去的小众的野外路线</div>
+     </li>
+   </ul>
+   
+
+  <el-timeline class="time_line">
+ 
+        <el-timeline-item v-for="(item,index) in piclist" :key="index" timestamp="2018/4/12" placement="top">
+          <el-card>
+            <h4>{{item.title}}</h4>
+            <p>活动地址:{{item.address}}</p>
+          </el-card>
+        </el-timeline-item>
+         
+
+      
+    </el-timeline>
+    <div v-if="piclist.length==0" class="no_record">暂无数据</div>
+
+
+   </div>
+  </div>
+</template>
+
+<script>
+import Header from '@/components/header.vue'
+export default {
+  components: {Header},
+  mounted(){
+  
+  },
+  data() {
+    return {
+      piclist:[],
+      tagid:this.$route.query.id,
+      dialogVisible: false,
+      listshow:false
+     
+    }
+  },
+  created() {
+    
+     this.getList();     
+                      
+           
+  },
+  methods: {
+
+    getList:function(){
+        var that=this;
+        var params={
+          tagid:that.tagid
+        };
+        debugger;
+        that.$http.baseAction("ArticleList",params)
+            .then(response => {
+                debugger;
+                if(response.code==200)
+                if(response.data.length>0){
+                  that.listshow=true;
+                  that.piclist=response.data; 
+                }else{
+                  that.listshow=false; 
+                }
+                
+                that.isloading=false;
+                
+            }, err => {
+                console.log(err);
+            })
+            .catch((error) => {
+               console.log(error)
+        })
+    }
+
+
+
+  }
+}
+</script>
+
+<style scoped>
+
+.layui-container{
+    width: 1200px;
+    padding-left: 0;
+    padding-right: 0;
+    margin:0 auto;
+    padding-top:10px;
+}
+.road_box{
+  margin-top:30px;
+  padding-left:20px;
+}
+.road_ul li{
+  background:#e0434e;
+  color:#fff;
+  height:220px;
+  margin-top:30px;
+  position:relative;
+}
+.road_title{
+  font-size:28px;
+  color:#fff;
+  font-weight:bold;
+  line-height:80px;
+  padding-left:30px;
+  font-family: "Microsoft YaHei";
+}
+.road_js{
+  padding-left:40px;
+}
+.road_btn{
+  position:absolute;
+  right:20px;
+  bottom:20px;
+  width:100px;
+  line-height:36px;
+  border-radius:18px;
+  background:#fff;
+  color:#e0434e;
+  text-align:center;
+}
+.time_line{
+  margin-top:30px;
+}
+.no_record{
+  line-height:80px;
+  text-align:center;
+}
+</style>

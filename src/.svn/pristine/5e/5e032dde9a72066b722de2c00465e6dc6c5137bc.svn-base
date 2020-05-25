@@ -1,0 +1,99 @@
+<template>
+  <div>
+
+    <div id="qrcode" style="display:none"></div> <!-- 创建一个div，并设置id为qrcode -->
+    <div class="canvasWrap">
+      <img :src="newSrc" class="newImage" id="newimage">
+    </div>
+  </div>
+</template>
+   
+<script>
+import QRCode from 'qrcodejs2'  // 引入qrcode
+export default {
+  name : 'test',
+  props: ["message"],
+  data(){
+      return{
+        canvas:'',
+        newSrc:''
+      }
+  },
+  mounted () {
+    this.qrcode();
+    this.drawImage();
+  },
+  methods: {
+    qrcode() {
+      let qrcode = new QRCode('qrcode', {
+        width: 132,  
+        height: 132,
+        text: 'http://www.hdhome.net/#/articleDetail?id='+this.message // 二维码地址
+      })
+    },
+    drawImage(){
+                var that=this;
+                var screen_width=355;
+                var screen_height=597;
+                var imageBox = document.getElementById("newimage");
+                var text1='活动时间: '+this.message.starttime+'~'+this.message.endtime;
+                var text2='活动地点: '+this.message.address;
+                let canvas = document.createElement('canvas'),cxt = canvas.getContext('2d');
+                canvas.width =screen_width;
+                canvas.height =screen_height;
+                
+                cxt.rect(0, 0, screen_width, screen_height);
+                cxt.fillStyle = '#ecffce'; // 填充颜色
+                cxt.fill();
+
+
+                var img = new Image();
+                //img.src ="http://129.204.92.191/upload/poster/test1.png";
+                img.src = require('../assets/test1.png');
+                debugger;
+                img.crossOrigin="anonymous"; //关键
+                var img_width=218;
+                var img_height=img.height;
+                debugger;
+                var img2 = new Image();
+                img2.src = require('../assets/test2.png')
+                img2.crossOrigin="anonymous"; //关键
+                // 图片加载完成，才可处理
+                var cal_img_width=(screen_width-img_width)/2
+                var cal_img_width2=(screen_width-132)/2
+                img.onload = () => {
+                  img2.onload = () => {
+                    // 画图(这里画布与图片等宽高)
+                    this.height=30+"px";
+                    this.width=30+"px"; 
+                    cxt.drawImage(img,cal_img_width, 150);
+                    cxt.drawImage(img2,cal_img_width2,screen_height-240);
+                    cxt.font = "14px Microsoft YaHei"
+                    cxt.textBaseline = 'middle'
+                    cxt.textAlign = 'left'
+                    cxt.fillStyle="#333"; 
+                    cxt.fillText(text1, 10,screen_height-60);
+                    cxt.fillText(text2, 10, screen_height-30);
+                    that.canvas=canvas;
+                    imageBox.src = canvas.toDataURL("image/jpg")
+
+                  } 
+                }
+    },
+    download(){
+         var a = document.createElement("a");
+             a.href = this.canvas.toDataURL();
+             a.download = 'hdhome.png';
+             a.click()
+    }
+  }
+}
+</script>
+<style>
+.canvasWrap{
+  text-align:center;
+}
+.canvasWrap img{
+  border-radius:10px;
+}
+</style>

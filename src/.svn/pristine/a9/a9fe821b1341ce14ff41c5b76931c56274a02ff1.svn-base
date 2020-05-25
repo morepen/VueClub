@@ -1,0 +1,153 @@
+<template>
+  <div>
+  <Header :TabState="3"></Header>
+  <div class="layui-container">
+     <ul class="service_ul">
+       <li>
+         <div class="service_wrap">
+             <div class="service_title">故事汇大全</div>
+             <div class="service_content">记录触动人心，有趣，感人故事</div>
+             <div class="service_bottom">
+                <span class="service_btn" @click="dialogVisible = true">关注活动</span>
+                <router-link :to="{path:'/publish',query: {id: 3}}"><span class="service_btn">参与活动</span></router-link>
+             </div>
+         </div>
+       </li>
+       
+       <li>
+         <div class="service_wrap">
+             <div class="service_title">户外活动</div>
+             <div class="service_content">记录好玩的户外生活</div>
+             <div class="service_bottom">
+                <span class="service_btn" @click="dialogVisible = true">关注活动</span>
+                <router-link to="/servicelist"><span class="service_btn">参与活动</span></router-link>
+             </div>
+         </div>
+       </li>
+       <li>
+         <div class="service_wrap">
+             <div class="service_title">网上接单服务</div>
+             <div class="service_content">记录网上接单需求和供求</div>
+             <div class="service_bottom">
+                <span class="service_btn" @click="dialogVisible = true">关注活动</span>
+                <router-link :to="{path:'/register',query: {id: 3}}"><span class="service_btn">发布需求</span></router-link>
+             </div>
+         </div>
+       </li>
+       <li>
+         <div class="service_wrap">
+             <div class="service_title">意见反馈</div>
+             <div class="service_content">意见和修订记录</div>
+             <div class="service_bottom">
+                <span class="service_btn" @click="dialogVisible = true">关注活动</span>
+                <router-link to="/Community"><span class="service_btn">发表意见</span></router-link>
+             </div>
+         </div>
+       </li>
+     </ul>
+    
+  </div>
+  <el-dialog
+  title="提示"
+  :visible.sync="dialogVisible"
+  width="30%"
+  >
+  <div class="wx_tip">扫码关注公众号,接受最新活动资讯</div>
+  <img class="wx_welcome" src="https://www.hdhome.net/source/image/wx.jpg">
+  <span slot="footer" class="dialog-footer">
+    
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+</el-dialog>
+ </div>
+</template>
+
+<script>
+import Header from '@/components/header.vue'
+import uploader from '@/components/uploader.vue';
+export default {
+  components: {Header},
+  mounted(){
+  
+  },
+  data() {
+    return {
+      piclist:[],
+      dialogVisible: false
+     
+    }
+  },
+  created() {
+    
+            
+                      
+           
+  },
+  methods: {
+
+    
+
+
+
+  }
+}
+</script>
+
+<style scoped>
+
+.layui-container{
+    width: 1200px;
+    padding-left: 0;
+    padding-right: 0;
+    margin:0 auto;
+    padding-top:10px;
+}
+.service_ul li{
+  width:50%;
+  float:left;
+  list-style:none;
+}
+.service_wrap{
+  margin:20px;
+  background:#61669d;
+  color:#fff;
+  padding:36px 20px 50px 20px;
+  height:200px;
+  position:relative;
+}
+.service_title{
+  font-size:24px;
+}
+.service_content{
+  text-indent: 1em;
+  padding-top:30px;
+}
+.service_bottom{
+  position:absolute;
+  left:0px;
+  bottom:0px;
+  width:100%;
+}
+.service_btn{
+  float:right;
+  padding:0px 16px;
+  line-height:36px;
+  border-radius:18px;
+  display:inline-block;
+  background:#fff;
+  color:#61669d;
+  margin-bottom:16px;
+  margin-right:20px;
+}
+.wx_welcome{
+  width:80%;
+  margin-left:10%;
+}
+.wx_tip{
+   text-align:center;
+   line-height:40px;
+   color:#333;
+   font-size:16px;
+}
+</style>

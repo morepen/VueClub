@@ -1,0 +1,32 @@
+import Axios from "axios"
+import qs from "qs"
+import Config from '../config/config';
+export function fetch(url, params) {
+    return new Promise((resolve, reject) => {
+        Axios.post(url, qs.stringify(params))
+            .then(response => {
+                resolve(response.data);
+            }, err => {
+                reject(err);
+            })
+            .catch((error) => {
+                reject(error)
+            })
+    })
+}
+/**
+* 管理系统接口
+*/
+export default {
+    manageAction:function(action,param,Authorization){	
+        Axios.defaults.timeout = 50000;
+        Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+        var AUTH_TOKEN='Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJQb2xpY3lDb2RlIjoiUEVERDIwMTkzMTAwUTAwMEUwMTAyNSIsImlhdCI6MTU2OTI5NzY0OX0.QaaJKFzsw9Sl0TdIiGgNXEbis9UUj7Pmb9Cb1ubIOnU';
+        Axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+        Axios.defaults.headers.post['Authorization'] = Authorization;
+        Axios.defaults.headers.post['Access-Control-Allow-Origin']='*';
+        Axios.defaults.baseURL = Config.httpUrl;
+        return fetch(action, param);
+        } 
+       
+    }

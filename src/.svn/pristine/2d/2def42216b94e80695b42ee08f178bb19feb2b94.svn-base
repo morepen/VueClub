@@ -1,0 +1,99 @@
+<template>
+<div class="logn">
+   <div class="layui-fulid news-login">
+  <a href="index.html" class="title"></a>
+  <div class="layui-form">
+    <div class="layui-input-block">
+      <input type="text" class="layui-input" v-model="email" lay-verify="required" placeholder="邮箱">
+    </div>
+     <div class="layui-input-block">
+      <input type="text" class="layui-input" v-model="password" lay-verify="required" placeholder="密码">
+    </div>
+   
+    <p class="terms"><input type="checkbox" lay-skin="primary" lay-ignore checked>我已阅读并同意<a href="">用户协议</a>和<a href="">隐私条款</a></p>
+    <button class="layui-btn" v-on:click="logn" lay-submit lay-filter="newsLogin">登录</button>
+    <div class="thirdParty"><a href=""><i class="layui-icon layui-icon-login-qq"></i></a><a href=""><i class="layui-icon layui-icon-login-wechat"></i></a></div>
+  </div>
+</div>
+   
+</div>
+</template>
+<script>
+  import {Message,Loading} from 'element-ui'
+  export default{
+    components: {},
+    data(){
+      return{
+        show1:true,
+        isNowPage: true,
+        email:'',
+        password:'',
+        taglist:[]
+        
+
+      }
+    },
+    created() {
+      
+    
+      
+    },
+    methods: {
+      logn:function(){
+      debugger;
+        var that=this;
+        var params={ 
+          email:this.email,
+          password:this.password         
+        };
+        if(this.email==''){
+         Message.error({message:"请输入正确邮箱"}); 
+         return false; 
+        }
+        if(this.password==''){
+         Message.error({message:"请输入正确格式密码"}); 
+         return false; 
+        }
+        that.loading=true;
+        that.$http.baseAction("HdLogn",params)
+            .then(response => {
+                that.loading=false;
+                debugger;
+                var msg=response.msg
+                if(response.code==200){
+
+                   Message.success({message: '登录成功'});
+                   setTimeout(function(){
+                          const url = '/user';
+                          that.$router.push({"path":url});
+                  },1000)
+                   
+                }else{
+                  debugger;
+                   Message.error({message:msg}); 
+                }
+                
+                
+                
+                
+            }, err => {
+                
+            })
+            .catch((error) => {
+              
+        })
+      }
+      
+      
+    }
+  }
+</script>
+<style scoped>
+ @import '../../assets/template/news/layui/css/layui.css';
+ @import '../../assets/template/news/static/css/index.css';
+.logn{
+  height:100%;
+ }
+</style>
+
+

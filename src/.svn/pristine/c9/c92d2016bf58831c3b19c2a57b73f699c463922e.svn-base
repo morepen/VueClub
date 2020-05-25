@@ -1,0 +1,117 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import Index from '@/views/index/index'
+import News from '@/views/news/index'
+import listmore from '@/views/index/listmore'
+import register from '@/views/index/register'
+import logn from '@/views/index/logn'
+import user from '@/views/index/user'
+import articleDetail from '@/views/index/articleDetail'
+import articleNewsDetail from '@/views/news/articleDetail'
+import publish from '@/views/index/publish'
+import Community from '@/views/community/index'
+import Service from '@/views/service/index'
+import ServiceList from '@/views/service/list'
+import RoadIndex from '@/views/road/index'
+import RoadDetail from '@/views/road/detail'
+import goldword from '@/views/words/list'
+import changepsd from '@/views/index/changepsd'
+
+
+
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+     {
+      path: '/',
+      name: 'index',
+      component: Index
+    },
+    {
+      path: '/news',
+      name: 'news',
+      component: News
+    },
+    { 
+     path: '/articleDetail',
+     name: 'articleDetail',
+     component: articleDetail 
+    },
+    { 
+     path: '/articleNewsDetail',
+     name: 'articleNewsDetail',
+     component: articleNewsDetail 
+    },
+    { 
+     path: '/listmore',
+     name: 'listmore',
+     component: listmore 
+    },
+    { 
+     path: '/register',
+     name: 'register',
+     component: register 
+    },
+    { 
+     path: '/logn',
+     name: 'logn',
+     component: logn 
+    },
+    { 
+     path: '/user',
+     name: 'user',
+     component: user 
+    },
+    { 
+     path: '/changepsd',
+     name: 'changepsd',
+     component: changepsd 
+    },
+    { 
+     path: '/publish',
+     name: 'publish',
+     component: publish 
+    },
+    { 
+     path: '/Community',
+     name: 'Community',
+     component: Community 
+    },
+    { 
+     path: '/service',
+     name: 'Service',
+     component: Service 
+    },
+    { 
+     path: '/servicelist',
+     name: 'ServiceList',
+     component: ServiceList 
+    },
+    { 
+     path: '/goldword',
+     name: 'goldword',
+     component: goldword 
+    },
+    { 
+     path: '/RoadIndex',
+     name: 'RoadIndex',
+     component: RoadIndex 
+    },
+    { 
+     path: '/RoadDetail',
+     name: 'RoadDetail',
+     component: RoadDetail 
+    },
+
+    /*{
+      path: '/road',
+      name: 'road',
+      children:[
+                    { path: '/road/index', component:RoadIndex},
+                    { path: '/road/detail', component:RoadDetail},
+
+      ]
+    }*/
+  ]
+})

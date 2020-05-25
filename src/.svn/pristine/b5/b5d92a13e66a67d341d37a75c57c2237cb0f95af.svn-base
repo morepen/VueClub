@@ -1,0 +1,76 @@
+<template>
+<div class="header">
+	<div class="news-header">
+  <div class="layui-container">
+    <a id="logo" href="index.html"></a>
+    <ul class="layui-nav header-nav close">
+      <li :class="{'layui-this':TabState == 1,'layui-nav-item':true}">
+        <a href="index.html">首页</a>
+      </li>
+      <li class="layui-nav-item" style="display:none">
+        <router-link to="/Community">社区</router-link>
+      </li>
+      <li :class="{'layui-this':TabState == 2,'layui-nav-item':true}">
+        <router-link to="/news">热文</router-link>
+      </li>
+      <li class="layui-nav-item" style="display:none">
+        <a href="chat/nearby.html">附近</a>
+      </li>
+      <li :class="{'layui-this':TabState == 3,'layui-nav-item':true}">
+        <router-link to="/service">活动</router-link>
+        <dl class="layui-nav-child">
+          <dd><a class="hida" href="list.html">电影</a> <a class="hida" href="list.html">国际</a></dd>
+          <dd><a class="hida" href="list.html">音乐</a> <a class="hida" href="list.html">育儿</a></dd>
+          <dd><a class="hida" href="list.html">书籍</a> <a class="hida" href="list.html">美食</a></dd>
+        </dl>
+      </li>
+    </ul>
+    <button id="switch">
+      <span></span><span class="second"></span><span class="third"></span>
+    </button>
+    <div class="layui-form header-search">
+      <input type="text" placeholder="新闻" class="layui-input">
+    </div>
+    <div class="layui-form header-login">
+      <router-link :to="{path:'/logn'}">登入</router-link>
+      <router-link :to="{path:'/register',query: {id: 0}}">注册</router-link>
+      <a href="" style="display:none"><i class="layui-icon layui-icon-news-qq"></i></a>
+      <a href="" style="display:none"><i class="layui-icon layui-icon-news-wechat"></i></a>
+    </div>
+    <ul class="layui-nav header-login">
+      <li class="layui-nav-item">
+        <a href="javascript:;"><img src="" class="layui-nav-img"></a>
+        <dl class="layui-nav-child">
+          <dd><a href="user.html">个人中心</a></dd>
+          <dd><a href="javascript:;">退出登录</a></dd>
+        </dl>
+      </li>
+    </ul>
+  </div>
+</div>
+</div>
+</template>
+
+<script>
+ export default {
+    props: ["TabState"],
+    data() {
+      return {
+        
+      }
+    },
+    mounted() {
+   
+    
+    },
+    methods: {
+       
+
+    }
+  }
+</script>
+<style scoped>
+@import '../assets/template/news/layui/css/layui.css';
+@import '../assets/template/news/static/css/index.css';
+</style>
+

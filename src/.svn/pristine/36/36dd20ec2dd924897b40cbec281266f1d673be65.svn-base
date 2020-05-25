@@ -1,0 +1,117 @@
+<template>
+<div class="header">
+	<div class="news-header">
+  <div class="layui-container">
+    <a id="logo" href="index.html"></a>
+    <div class="pc_nav">
+    <ul class="layui-nav header-nav close">
+      <li :class="{'layui-this':TabState == 1,'layui-nav-item':true}">
+        <a href="index.html">首页</a>
+      </li>
+      <li :class="{'layui-this':TabState == 2,'layui-nav-item':true}">
+        <router-link to="/news">新闻</router-link>
+      </li>
+        <li :class="{'layui-this':TabState == 3,'layui-nav-item':true}">
+        <router-link to="/service">活动</router-link>
+      </li>
+      <li :class="{'layui-this':TabState == 4,'layui-nav-item':true}">
+        <router-link to="/goldword">金句子</router-link>
+      </li>
+    
+      
+    </ul>
+    <div class="userinfo" v-if="user.id!=0">
+         欢迎，<router-link :to="{path:'/user'}"><span class="username">{{user.username}}</span></router-link><span class="checkout" v-on:click="checkout()">退出</span>
+    </div>
+    </div>
+    
+    <div class="layui-form header-login" v-if="user.id==0">
+        
+      
+      <div >
+       
+        <router-link :to="{path:'/logn'}">登入</router-link>
+        <router-link :to="{path:'/register',query: {id: 0}}">注册</router-link>
+      </div>
+
+    </div>
+    <ul class="layui-nav header-login">
+      <li class="layui-nav-item">
+        <a href="javascript:;"><img src="" class="layui-nav-img"></a>
+        <dl class="layui-nav-child">
+          <dd><a href="user.html">个人中心</a></dd>
+          <dd><a href="javascript:;">退出登录</a></dd>
+        </dl>
+      </li>
+    </ul>
+  </div>
+</div>
+</div>
+</template>
+
+<script>
+ export default {
+    props: ["TabState"],
+    data() {
+      return {
+        userinfo:{
+          id:0,
+          usernmae:"游客"
+        }
+      }
+    },
+    mounted() {
+   
+    
+    },
+    methods: {
+       checkout:function(){
+          this.$store.state.userinfo={
+          id:0,
+          usernmae:"游客"
+        }
+        const url = '/';
+        this.$router.push({"path":url});
+       }
+
+    },
+    watch:{
+       userinfo: {
+        handler(newName, oldName) {
+          this.userinfo = newName;
+        },
+        // 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
+        immediate: true
+      }
+    },
+    computed:{
+      user: function () { 
+         debugger;
+         return this.$store.state.userinfo
+       }
+    }
+
+
+  }
+</script>
+<style scoped>
+@import '../assets/template/news/layui/css/layui.css';
+@import '../assets/template/news/static/css/index.css';
+.userinfo{
+  color:#fff;
+  position:absolute;
+  right:0px;
+  top:0px;
+  line-height:50px;
+}
+.layui-container{
+  position:relative;
+}
+.checkout{
+  margin:0 16px;
+}
+.username{
+  color:#bbdbf5;
+}
+</style>
+

@@ -1,0 +1,65 @@
+<template>
+<div class="header">
+	<div class="news-header">
+  <div class="layui-container">
+    <a id="logo" href="index.html"></a>
+    <ul class="layui-nav header-nav close pc_nav">
+      <li :class="{'layui-this':TabState == 1,'layui-nav-item':true}">
+        <a href="index.html">首页</a>
+      </li>
+      <li :class="{'layui-this':TabState == 2,'layui-nav-item':true}">
+        <router-link to="/news">热文</router-link>
+      </li>
+      <li :class="{'layui-this':TabState == 3,'layui-nav-item':true}">
+        <router-link to="/service">活动</router-link>
+      </li>
+    </ul>
+    <ul class="layui-nav header-nav close mobile_nav">
+      <li :class="{'layui-this':TabState == 1,'layui-nav-item':true}">
+        <a href="index.html">首页</a>
+      </li>
+    </ul>
+    <div class="layui-form header-search">
+      <input type="text" placeholder="新闻" class="layui-input">
+    </div>
+    <div class="layui-form header-login">
+      <router-link :to="{path:'/logn'}">登入</router-link>
+      <router-link :to="{path:'/register',query: {id: 0}}">注册</router-link>
+    </div>
+    <ul class="layui-nav header-login">
+      <li class="layui-nav-item">
+        <a href="javascript:;"><img src="" class="layui-nav-img"></a>
+        <dl class="layui-nav-child">
+          <dd><a href="user.html">个人中心</a></dd>
+          <dd><a href="javascript:;">退出登录</a></dd>
+        </dl>
+      </li>
+    </ul>
+  </div>
+</div>
+</div>
+</template>
+
+<script>
+ export default {
+    props: ["TabState"],
+    data() {
+      return {
+        
+      }
+    },
+    mounted() {
+   
+    
+    },
+    methods: {
+       
+
+    }
+  }
+</script>
+<style scoped>
+@import '../assets/template/news/layui/css/layui.css';
+@import '../assets/template/news/static/css/index.css';
+</style>
+

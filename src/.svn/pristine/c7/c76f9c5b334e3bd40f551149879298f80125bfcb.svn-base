@@ -1,0 +1,551 @@
+<template>
+  <div>
+ 
+    <div class="container_wrap">
+        <div class="hc_title">活动推荐</div>
+        <ul class="hc_nav">
+          <li><span class="active">动态</span></li>
+          <li><span>活动</span></li>
+          <li><span>我的</span></li>
+        </ul>
+        <div class="list_wrap">
+          <div class="list_item" v-for="item in piclist">
+          <div class="user_info">
+            <span class="user_img"><img src="./assets/userpic/6.jpg"></span>
+            <div class="user_text">
+              <div class="user_name">游客_wx0716</div>
+              <div class="create_time">2019.7.26 9:00</div>
+            </div>
+          </div>
+          <div class="pic_content">{{item.content}}</div>
+          <div class="pic_item">
+            <img v-gallery:group1
+              class="thumbnail"
+              v-for="img in jsonChange(item.pics)"
+              :src="attachImageUrl(img)"
+              >
+          </div>
+        </div>
+       </div>
+      
+    </div>
+     <div class="write" v-on:click="showPopup()"><img src="./assets/write.png"></div> 
+     <div class="popup" v-show="uploadershow">
+           <div class="popup-content">
+            <div class="popup-header clearfix">
+             <div>发布活动</div> 
+             <img src="./assets/close.png" class="close_write" v-on:click="closePopup()">
+            </div> 
+            <form class="pure-form pure-form-stacked">
+             <div class="pure-g">
+              <div class="pure-u-1">
+               <textarea cols="30" rows="8" placeholder="活动内容" maxlength="1500" required="required" class="hd_content" v-model="content"></textarea>
+              </div> 
+              <div class="pure-u-1">
+               <div class="pic_tip">添加图片（最多9张）</div> 
+               <div class="thumbnails">
+                <ul> 
+                  <li class="btn-add_pic" v-show='false' ><input name="file" type="file" id="file" title="添加图片" accept="image/*" /></li>
+                  <uploader></uploader>
+                </ul>
+               </div>
+              </div>  
+              <div class="wrap_foot">
+               <button type="button" class="btn btn-primary" v-on:click="createPics()">发布</button>
+              </div>
+             </div>
+            </form>
+           </div>
+       </div>
+     <div class="bottom-guide bottom-guide-wrap">
+     <div class="open-style" >
+         <span class="bottom-guide-close">x</span> 
+          <img src="./assets/applogo.png" class="bottom-guide-icon"> 
+          <div class="bottom-guide-title">
+             <span class="logo-desc">活动之家</span> 
+             <span class="content-text">随时随地开启你要的活动模式</span>
+          </div>
+          <div class="bottom-guide-button"><a href="https://www.hdhome.net/hdhome.apk">打开</a></div>
+          
+      </div>
+     </div>
+  </div>
+
+</template>
+
+<script>
+import axios from 'axios';
+import qs from 'qs';
+
+axios.defaults.timeout = 50000;
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+axios.defaults.baseURL = 'https://www.hdhome.net:17001/public/';
+
+import Vuer from './Vuer.vue'
+import uploader from './uploader.vue';
+export default {
+  components: { Vuer,'uploader':uploader },
+  mounted(){
+    console.log(this.$imgVuer)
+  },
+  data() {
+    return {
+      piclist:[],
+      uploadpath:'https://www.hdhome.net/upload/',
+      content:'',
+      uploadershow:false,
+
+    }
+  },
+  created() {
+    this.GetPicList();
+            
+                      
+           
+  },
+  methods: {
+
+    GetPicList(){
+        var that=this;
+        var params={};
+        var url='https://www.hdhome.net/public/PicList';
+        axios.post(url, qs.stringify(params))
+            .then(response => {
+                that.piclist=response.data.data; 
+            }, err => {
+                console.log(err);
+            })
+            .catch((error) => {
+               console.log(error)
+            }) 
+    },
+    createPics:function(){
+       var imgData=this.$store.state.files;
+       debugger;
+       
+
+               var data={
+                  userid:'-1',
+                  content:this.content,
+                  imgData:imgData,
+                  tagsname:'-1',
+                  teamid:'-1',
+                  zuid:'-1'
+                }
+              if(this.content == null ||this.content== undefined ||this.content==''){
+                       alert('内容不能为空');
+                       return;
+              }
+              if(imgData == null ||imgData== undefined || imgData==''){
+                alert('还未添加图片');
+                return;
+              }
+              var that=this;
+              var url='https://www.hdhome.net/public/PicUpload'
+              axios.post(url, qs.stringify(data))
+                .then(response => {
+                    debugger;
+                    if(response.data.code==200){
+
+                        that.uploadershow=false;
+                        that.piclist[that.piclist.length]={
+                        content:that.content,
+                        pics:response.data.data.path
+                      };
+                    }
+                }, err => {
+                    console.log(err);
+                })
+                .catch((error) => {
+                   console.log(error)
+                })         
+    },
+    showPopup() {
+              this.uploadershow=true;
+            },
+    closePopup() {
+              this.uploadershow=false;
+    },
+    jsonChange(string) {
+              if (string) {
+                 return JSON.parse(string);
+               }
+    },
+    attachImageUrl(srcUrl) {
+              var that=this;
+              if (srcUrl !== undefined) {
+                 return that.uploadpath+srcUrl;
+               }
+    },
+    downloadapp(){
+      window.open='https://www.hdhome.net/hdhome.apk';
+    }
+
+
+
+  }
+}
+</script>
+
+<style scoped>
+
+ @media (min-width: 1100px) {
+  .container_wrap{
+  position:relative;
+  width:1100px;
+  margin:0 auto;
+}
+ }
+.hc_title{
+   position: fixed;
+    top: 0px;
+   left:0px;
+   width:100%;
+   text-align:center;
+   line-height:36px;
+   background:#fff;
+   z-index:8;
+}
+.hc_nav{
+    position: fixed;
+    top:36px;
+    left:0px;
+    width:100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    height: 30px;
+    line-height: 30px;
+    background: #fff;
+    z-index:8;
+}
+.hc_nav li{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    list-style-type:none;
+    text-align:center;
+    color:#666;
+    line-height:30px;
+}
+.hc_nav li .active{
+  border-bottom:solid 2px #000;
+}
+.user_info{
+  position:relative;
+  height:60px;
+
+}
+.user_img img{
+  width:50px;
+  height:50px;
+  position:absolute;
+  top:0px;
+  left:0px;
+
+}
+.user_text{
+  float:left;
+  margin-left:60px;
+  line-height:26px;
+}
+.list_wrap{
+  width:100%;
+  position:absolute;
+  top:70px;
+  left:0px;
+  z-index:1;
+  text-align:left;
+  margin-bottom:50px;
+
+}
+.list_item{
+  overflow:hidden;
+  margin-top:16px;
+  padding:10px 16px;
+  background:#fff;
+}
+.pic_item{
+  over-flow:hidden;
+  background:#fff;
+}
+
+
+.thumbnail {
+  display: block;
+  float: left;
+  margin: 3px;
+  height: 100px;
+  width: 100px;
+  object-fit: cover;
+}
+pre {
+  font-family: Monaco;
+  color: #fff;
+  padding: 0.5rem;
+}
+header {
+  font-size: 2rem;
+  color: #fff;
+}
+footer {
+  font-size: 1rem;
+  color: #fff;
+}
+.descript {
+  font-size: 1.3rem;
+  color: #9a9a9a;
+  margin-bottom: 2rem;
+}
+.subtitle {
+  font-size: 1.2rem;
+  color: #a7a8aa;
+  margin-bottom: 1rem;
+}
+.vue-green {
+  color: #4fc08d;
+}
+.iconfont {
+  font-size: 1.5rem;
+  margin: 0.3rem;
+}
+.gray {
+  color: #ccc;
+}
+.write{
+  position:fixed;
+  bottom:70px;
+  right:16px;
+  z-index:8;
+}
+.write img{
+  width:60px;
+  height:60px;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+  background: rgba(0,0,0,.65)
+}
+
+.popup .popup-content {
+  -webkit-transform: translate(0,0);
+  transform: translate(0,0);
+  color: #222;
+  background-color: #f4f4f4;
+  width:88%;
+  height:430px;
+  position:absolute;
+  left:6%;
+  top:50%;
+  margin-top:-215px;
+}
+
+.popup .popup-header {
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+  background-color: #fff
+}
+
+.popup .popup-header h3 {
+  margin: 0;
+  float: left;
+  font-weight: 400
+}
+
+.popup .popup-header .icon-close {
+  color: #777;
+  font-size: 24px;
+  float: right
+}
+
+.popup .popup-header .icon-close:hover {
+  color: #111;
+  cursor: pointer
+}
+
+.popup form {
+  padding: 20px
+}
+
+.popup textarea {
+  resize: vertical
+}
+.fade-enter-active,.fade-leave-active {
+  -webkit-transition: opacity .5s;
+  transition: opacity .5s
+}
+
+.fade-enter,.fade-leave-active {
+  opacity: 0
+}
+
+.btn {
+  display: inline-block;
+  zoom: 1;
+  line-height: normal;
+  white-space: nowrap;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 100%;
+  padding: .5em 1em;
+  color: #444;
+  color: rgba(0,0,0,.8);
+  border: none transparent;
+  background-color: #e6e6e6;
+  text-decoration: none;
+  border-radius: 2px;
+  outline: none;
+  margin:0 auto;
+}
+
+.btn-primary,.btn-selected,a.btn-primary,a.btn-selected {
+  background-color: #189adb;
+  color: #eee;
+  border:0;
+}
+.pure-form input[type=password],.pure-form input[type=email],.pure-form input[type=url],.pure-form input[type=date],.pure-form input[type=month],.pure-form input[type=time],.pure-form input[type=datetime],.pure-form input[type=datetime-local],.pure-form input[type=week],.pure-form input[type=tel],.pure-form input[type=color],.pure-form input[type=number],.pure-form input[type=search],.pure-form input[type=text],.pure-form select,.pure-form textarea {
+  padding: .5em .6em;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 3px #ddd;
+  border-radius: 4px;
+  vertical-align: middle;
+  box-sizing: border-box
+}
+.pic_tip{
+  line-height:36px;
+}
+.hd_content{
+  width:100%;
+}
+.wrap_foot{
+  text-align:center;
+}
+.close_write{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:24px;
+  height:24px;
+}
+.bottom-guide{
+   height: 50px;
+   width: 100%;
+   position: fixed;
+   bottom: 0;
+   left:0x;
+   z-index:999999999;
+}
+.bottom-guide .open-style {
+   
+    bottom: 0;
+    z-index: 100;
+    height: 50px;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0 17px;
+    background: #fff;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.bottom-guide-close{
+    height: 12px;
+    width: 12px;
+    line-height: 10px;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+}
+.bottom-guide-icon{
+    width: 34px;
+    height: 34px;
+    margin: 0 8px 0 9px;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+}
+.bottom-guide-title{
+    width:100px;
+    flex: 1 1 auto;
+    color: #333;
+    font-size: 13px;
+    max-height: 34px;
+    line-height: 17px;
+    text-align: left;
+    padding-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.bottom-guide-button{ 
+    position:absolute;
+    bottom:10px;
+    right:10px;
+    z-index:9999999;
+    width: 57px;
+    height: 28px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    background-color: #eb4146;
+    font-size: 13px;
+    color: #fff;
+    line-height: 28px;
+    margin-left: 20px;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    text-align:center;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+}
+.bottom-guide-button a{
+    width: 57px;
+    height: 28px;
+  color:#fff;
+  text-decoration:none;
+  display:block;
+}
+.words{
+  display:none
+}
+</style>

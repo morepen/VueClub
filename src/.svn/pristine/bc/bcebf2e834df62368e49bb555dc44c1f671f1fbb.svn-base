@@ -1,0 +1,86 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import News from '@/views/news/index'
+import listmore from '@/views/news/listmore'
+import register from '@/views/news/register'
+import logn from '@/views/news/logn'
+import user from '@/views/news/user'
+import articleDetail from '@/views/news/articleDetail'
+import publish from '@/views/news/publish'
+import Community from '@/views/community/index'
+import Service from '@/views/service/index'
+import RoadIndex from '@/views/road/index'
+import RoadDetail from '@/views/road/detail'
+
+
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'News',
+      component: News
+    },
+    { 
+     path: '/articleDetail',
+     name: 'articleDetail',
+     component: articleDetail 
+    },
+    { 
+     path: '/listmore',
+     name: 'listmore',
+     component: listmore 
+    },
+    { 
+     path: '/register',
+     name: 'register',
+     component: register 
+    },
+    { 
+     path: '/logn',
+     name: 'logn',
+     component: logn 
+    },
+    { 
+     path: '/user',
+     name: 'user',
+     component: user 
+    },
+    { 
+     path: '/publish',
+     name: 'publish',
+     component: publish 
+    },
+    { 
+     path: '/Community',
+     name: 'Community',
+     component: Community 
+    },
+    { 
+     path: '/service',
+     name: 'Service',
+     component: Service 
+    },
+    { 
+     path: '/RoadIndex',
+     name: 'RoadIndex',
+     component: RoadIndex 
+    },
+    { 
+     path: '/RoadDetail',
+     name: 'RoadDetail',
+     component: RoadDetail 
+    },
+
+    /*{
+      path: '/road',
+      name: 'road',
+      children:[
+                    { path: '/road/index', component:RoadIndex},
+                    { path: '/road/detail', component:RoadDetail},
+
+      ]
+    }*/
+  ]
+})

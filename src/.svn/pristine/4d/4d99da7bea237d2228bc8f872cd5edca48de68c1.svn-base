@@ -1,0 +1,139 @@
+<template>
+<div class="news">
+   
+     <Header :TabState="1"></Header>
+     <Content></Content>
+     <div class="adv_wrap">
+         <div class="adv_head">APP下载</div>
+         <a download="hdhome" href="http://www.hdhome.net/download/app/hdhome1.0.apk"><img class="app_code" src="../../assets/app.png"></a>
+
+         <div class="adv_head1">公众号</div>
+         <img class="app_code" src="../../assets/wx.jpg">
+
+     </div>
+
+   
+     
+     <Footer></Footer>
+
+</div>
+</template>
+<script>
+import Vue from 'vue'
+import 'element-ui/lib/theme-chalk/index.css';
+import Element from 'element-ui';
+Vue.use(Element)
+
+
+  import Header from '@/components/header.vue'
+  import Content from '@/components/Content.vue'
+  import Footer from '@/components/footer.vue'
+  import mqtt from 'mqtt'
+  export default{
+    components: {Header,Content,Footer},
+    data(){
+      return{
+        show1:true,
+        isNowPage: true,
+        
+
+      }
+    },
+    created() {
+      
+     
+      
+    },
+    methods: {
+      online:function(){    
+          var that=this;
+       let client = {};
+        var options = { 
+                    timeout: 10,
+                    useSSL: false,
+                    cleanSession: false,
+                   //如果为false(flag=0)，Client断开连接后，Server应该保存Client的订阅信息。如果为true(flag=1)，表示Server应该立刻丢弃任何会话状态信息。
+                    onFailure: function(message) {
+                        //连接失败定时重连
+                        setTimeout(this.online, 2000);
+                    }
+        };
+        //开启mqtt链接
+        client = mqtt.connect('ws://129.204.92.191:19002',options);
+        //client=mqtt.connect('tcp://129.204.92.191:19002');　
+        //订阅后端给你发的字段 在on里面接收
+        var Topic='broadcast'
+        client.on('connect', function () {
+            console.log("suc");
+            debugger;
+        });
+        //订阅消息
+        client.subscribe(Topic, function (err) {
+                debugger;
+                console.log("subscribe");
+                if (!err) {
+                    console.log("订阅broadcast广播成功");
+                }
+        })
+        //接收消息
+        client.on("message", function (topic, message) {
+         
+            var result=JSON.parse(message.toString());　　//接收到新消息，并对其进行处理
+        　　try{
+        　　　　console.log('result---->',result);
+
+        　　　　//****do something **** 
+        　　}catch(e){
+        　　　　console.log('error---->',result);
+        　　}
+            that.$notify({
+                title: '成功',
+                message: '这是一条成功的提示消息',
+                type: 'success'
+            });
+
+
+             
+        });
+        var _message={a:1,b:2}
+        //client.publish(Topic,JSON.stringify(_message));
+        //连接断开
+        client.end()
+      }
+      
+    }
+  }
+</script>
+<style>
+ .adv_wrap{
+   width:100px;
+   height:136px;
+   position:fixed;
+   left:0px;
+   top:50%;
+   margin-top:-120px;
+
+ }
+ .adv_head{
+    line-height:36px;
+    background: #61669d;
+    color:#fff;
+    text-align:center;
+    font-size:16px;
+ }
+ .adv_head1{
+    margin-top:16px;
+    line-height:36px;
+    background: #61669d;
+    color:#fff;
+    text-align:center;
+    font-size:16px;
+ }
+ .app_code{
+   width:100px;
+   height:100px;
+ }
+
+</style>
+
+
