@@ -1,4 +1,4 @@
-# 师兄知识问答管理系统
+# 师兄知识问答管理系统(https://www.sxbbt.net/)
 
 ![Image text](https://www.sxbbt.net/qrcode/screenshot/pc/0.png)
 ![Image text](https://www.sxbbt.net/qrcode/screenshot/pc/1.png)
