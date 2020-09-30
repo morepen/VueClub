@@ -1,6 +1,12 @@
-# n
+# 师兄知识问答管理系统
 
-> A Vue.js project
+![Image text](https://www.sxbbt.net/qrcode/screenshot/pc/0.png)
+![Image text](https://www.sxbbt.net/qrcode/screenshot/pc/1.png)
+![Image text](https://www.sxbbt.net/qrcode/screenshot/pc/2.png)
+![Image text](https://www.sxbbt.net/qrcode/screenshot/pc/3.png)
+![Image text](https://www.sxbbt.net/qrcode/screenshot/pc/4.png)
+![Image text](https://www.sxbbt.net/qrcode/screenshot/pc/5.png)
+
 
 ## Build Setup
 
